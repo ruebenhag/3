@@ -1,0 +1,45 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract OptimisticRollupDEX {
+    struct Token {
+        string name;
+        address tokenAddress;
+    }
+
+    struct Order {
+        address trader;
+        address tokenIn;
+        address tokenOut;
+        uint256 amountIn;
+        uint256 amountOut;
+    }
+
+    mapping(address => uint256) public balances;
+    mapping(address => Token) public supportedTokens;
+    mapping(bytes32 => Order) public orders;
+
+    event TokenAdded(address indexed tokenAddress, string name);
+    event OrderPlaced(address indexed trader, address indexed tokenIn, address indexed tokenOut, uint256 amountIn, uint256 amountOut);
+
+    function addToken(address _tokenAddress, string memory _name) external {
+        supportedTokens[_tokenAddress] = Token(_name, _tokenAddress);
+        emit TokenAdded(_tokenAddress, _name);
+    }
+
+    function placeOrder(address _tokenIn, address _tokenOut, uint256 _amountIn, uint256 _amountOut) external {
+        // Perform validations, liquidity checks, etc.
+        // Place the order and update balances or liquidity pools
+        // This function should handle disputes and ensure correctness
+
+        bytes32 orderHash = keccak256(abi.encodePacked(msg.sender, _tokenIn, _tokenOut, _amountIn, _amountOut));
+        orders[orderHash] = Order(msg.sender, _tokenIn, _tokenOut, _amountIn, _amountOut);
+        
+        emit OrderPlaced(msg.sender, _tokenIn, _tokenOut, _amountIn, _amountOut);
+    }
+
+    function executeOrder(bytes32 _orderHash) external {
+        // Execute the order, swap tokens, update balances or liquidity pools, etc.
+        // This function should handle disputes and ensure correctness
+    }
+}
